@@ -12,7 +12,7 @@ $(TARGET_LIB): inbreeding.o
 	$(LD) ${LDFLAGS} -o $@ $^
 
 install: ${TARGET_LIB}
-	cp ${TARGET_LIB} ../usr/lib/
+	install -d ${TARGET_LIB} ../usr/lib/
 
 .PHONY: clean
 clean:
