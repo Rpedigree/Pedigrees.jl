@@ -19,4 +19,4 @@ provides(SimpleBuild,
              end)
          end),[libpedigree])
 
-@BinDeps.install Dict(:libpedigree => :libpedigree)
+@BinDeps.install [:libpedigree => :libpedigree] # complains under version 0.4.0-dev
