@@ -10,5 +10,6 @@ end
 
     include("types.jl")
     include("inbreeding.jl")
+    include("Tmat.jl")
 
 end #module
