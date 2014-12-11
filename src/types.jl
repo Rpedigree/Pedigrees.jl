@@ -34,7 +34,7 @@ function orderped{T<:Integer}(sire::Vector{T},dam::Vector{T})
     end
     ord = sizehint(T[],n)               # empty array with space reserved
     ## animals with both sire and dam unknown are put at the end of ord before reversing
-    unknownrents = IntSet((1:n)[sire .== 0 & dam .== 0]) 
+    unknownrents = IntSet(find(sire .== 0 & dam .== 0))
     pop = setdiff(IntSet(1:n),unknownrents)
     while length(pop) > 0
         inds = collect(pop)
@@ -44,8 +44,8 @@ function orderped{T<:Integer}(sire::Vector{T},dam::Vector{T})
     end
     reverse!(append!(ord,reverse!(collect(unknownrents))))
     length(ord) == n || error("Logic error in orderped, length(ord) == $(length(ord)) != $n")
-
     ip = invperm(ord)                   # will check that ord is a permutation
+
     ss = permute!([sire[i] == zero(T) ? zero(T) : ip[sire[i]] for i in 1:n],ord)
     dd = permute!([dam[i] == zero(T) ? zero(T) : ip[dam[i]] for i in 1:n],ord)
     ord,ss,dd
