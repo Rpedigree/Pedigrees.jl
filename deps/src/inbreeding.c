@@ -1,6 +1,6 @@
 #include <stddef.h>
 #include <stdlib.h>
-
+#include <stdio.h>
 
 /**
  * Create the inbreeding coefficients according to the algorithm given
@@ -17,41 +17,56 @@
  *
  */
 
+void printivec(const ptrdiff_t* vv, const char* nm, ptrdiff_t l) {
+    ptrdiff_t i;
+    printf("%s = [%ld", nm, vv[0]);
+    for(i = 1; i < l; ++i) printf(", %ld", vv[i]);
+    printf("]\n");
+}
+
 void inbreeding(const ptrdiff_t* sire, const ptrdiff_t* dam, const ptrdiff_t *lap,
-		ptrdiff_t n, double *F)
-{
-    ptrdiff_t i, j, t, S, D;
+		ptrdiff_t n, double *F) {
+    ptrdiff_t i, j, t, maxlap, S, D;
     ptrdiff_t *SI, *MI;		/* start and minor */
     double *L = calloc(n + 1, sizeof(double)), *B = calloc(n + 1, sizeof(double));
     ptrdiff_t *Anc = calloc(n + 1, sizeof(ptrdiff_t));	/* ancestor */
 	
-    t = lap[0];	     /* determine the maximum ancestral path length */
+    maxlap = lap[0];	     /* determine the maximum ancestral path length */
     for (i = 1; i <= n; ++i) {
-	if (lap[i] > t) t = lap[i];
+	if (lap[i] > maxlap) maxlap = lap[i];
     }
-    SI = calloc(t + 1, sizeof(ptrdiff_t)); /* initialized to zeros */
-    MI = calloc(t + 1, sizeof(ptrdiff_t));
+    SI = calloc(maxlap + 1, sizeof(ptrdiff_t)); /* initialized to zeros */
+    MI = calloc(maxlap + 1, sizeof(ptrdiff_t));
 
     F[0] = -1.0;		     /* set F  for unknown parents */
     for(i = 1; i <= n; i++) {	     /* evaluate F */
 	S = sire[i-1]; D = dam[i-1]; /* parents of animal i */
+	printf("(i,S,D) => (%ld,%ld,%ld)\n",i,S,D);
 	B[i] = 0.5 - 0.25 * (F[S] + F[D]); 
 				/* adjust start and minor */
 	for (j = 0; j < lap[i]; j++) {++SI[j]; ++MI[j];} 
+	printivec(SI,"SI",maxlap);
+	printivec(MI,"MI",maxlap);
 	if (S == 0 || D == 0) { /* both parents unknown */
+	    printf("unknown parents exit\n");
 	    F[i] = L[i] = 0.0; 
 	    continue;
 	}
 	if(S == sire[i-2] && D == dam[i-2]) { /* full-sib with last animal */
+	    printf("full sib exit\n");
 	    F[i] = F[i-1];
 	    L[i] = L[i-1];
 	    continue;
 	}
-    	F[i] = -1.0; L[i] = 1; 
+    	F[i] = -1.0; L[i] = 1.0; 
 	t = lap[i]; /* largest lap group number in the animal's pedigree */
 	Anc[MI[t]++] = i; /* initialize Anc and increment MI[t] */
 	while(t > -1) { /* from the largest lap group to zero */
 	    j = Anc[--MI[t]]; /* next ancestor */
+	    printf("(i,j,t) => (%ld,%ld,%ld)\n",i,j,t);
+	    printivec(SI,"SI",maxlap);
+	    printivec(MI,"MI",maxlap);
+	    printivec(Anc,"Anc",n+1);
 	    S = sire[j-1]; D = dam[j-1]; /* parents of the ancestor */
 	    if (S) {
 		if (!L[S]) Anc[MI[lap[S]]++] = S; 
