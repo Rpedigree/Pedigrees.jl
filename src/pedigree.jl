@@ -6,7 +6,7 @@ else
     error("pedigree not properly installed. Please run Pkg.build(\"pedigree\")")
 end
 
-    export Pedigree, inbreeding, orderped
+    export Pedigree, inbreeding, orderped, laporder
 
     include("types.jl")
     include("inbreeding.jl")

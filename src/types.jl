@@ -27,26 +27,38 @@ function lap{T<:Integer}(sire::Vector{T},dam::Vector{T})
     LAP
 end
 
-function orderped{T<:Integer}(sire::Vector{T},dam::Vector{T})
+## Create an ordering by longest ancestral path
+function laporder{T<:Integer}(sire::Vector{T},dam::Vector{T})
     (n = length(sire)) == length(dam) || throw(DimensionMismatch(""))
     for i in 1:n
         0 ≤ sire[i] ≤ n && 0 ≤ dam[i] ≤ n || error("row $i: sire and dam must be in 0:$n")
     end
-    ord = sizehint(T[],n)               # empty array with space reserved
-    ## animals with both sire and dam unknown are put at the end of ord before reversing
-    unknownrents = IntSet(find(sire .== 0 & dam .== 0))
-    pop = setdiff(IntSet(1:n),unknownrents)
-    while length(pop) > 0
-        inds = collect(pop)
-        parents = union(IntSet(sire[inds]),IntSet(dam[inds]))
-        append!(ord,reverse!(collect(setdiff(pop,parents))))
-        intersect!(pop,parents)
-    end
-    reverse!(append!(ord,reverse!(collect(unknownrents))))
-    length(ord) == n || error("Logic error in orderped, length(ord) == $(length(ord)) != $n")
-    ip = invperm(ord)                   # will check that ord is a permutation
 
-    ss = permute!([sire[i] == zero(T) ? zero(T) : ip[sire[i]] for i in 1:n],ord)
-    dd = permute!([dam[i] == zero(T) ? zero(T) : ip[dam[i]] for i in 1:n],ord)
-    ord,ss,dd
+    anc = IntSet(find(sire+dam .== 0))    # animals without ancestors in the pedigree
+    nopars = copy(anc)
+    ord = sizehint(collect(anc),n)        # anc first in ord, also reserve space
+    pop = setdiff!(IntSet(1:n),anc)       # animals who have not yet been sorted
+    lappt = [0,length(anc)]               # pointer to start of each lap level
+    push!(anc,0)                          # add zero to the set of ancestors already done
+    nextgen = sizehint(IntSet(),n)
+    while length(pop) > 0
+        empty!(nextgen)
+        for i in pop
+            sire[i] ∈ anc && dam[i] ∈ anc && push!(nextgen,i)
+        end
+        append!(ord,collect(nextgen))
+        push!(lappt,lappt[end]+length(nextgen))
+        union!(anc,nextgen)
+        setdiff!(pop,nextgen)
+    end
+    length(ord) == n || error("Logic error in laporder: ord is not length n = $n")
+    invp = invperm(ord)                 # checks that ord is indeed a permutation
+    ss = Array(T,(n,))
+    dd = Array(T,(n,))
+    for i in 1:n
+        j = ord[i]
+        ss[i] = sire[j] > 0 ? invp[sire[j]] : zero(T)
+        dd[i] = dam[j] > 0 ? invp[dam[j]] : zero(T)
+    end
+    ord,lappt,ss,dd
 end
