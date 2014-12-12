@@ -35,10 +35,9 @@ function laporder{T<:Integer}(sire::Vector{T},dam::Vector{T})
     end
 
     anc = IntSet(find(sire+dam .== 0))    # animals without ancestors in the pedigree
-    nopars = copy(anc)
     ord = sizehint(collect(anc),n)        # anc first in ord, also reserve space
     pop = setdiff!(IntSet(1:n),anc)       # animals who have not yet been sorted
-    lappt = [0,length(anc)]               # pointer to start of each lap level
+    lappt = sizehint([0,length(anc)],20)  # pointer to start of each lap level
     push!(anc,0)                          # add zero to the set of ancestors already done
     nextgen = sizehint(IntSet(),n)
     while length(pop) > 0
