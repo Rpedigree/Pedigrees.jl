@@ -6,7 +6,7 @@ module pedigree
 ##     error("pedigree not properly installed. Please run Pkg.build(\"pedigree\")")
 ## end
 
-    export Pedigree, laporder, Tinvt, Tmat
+    export Pedigree, laporder, Tinvt, Ltrans
 
     include("types.jl")
     include("inbreeding.jl")
