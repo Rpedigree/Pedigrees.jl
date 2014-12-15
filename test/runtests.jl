@@ -14,7 +14,7 @@ ord,lappt,ss,dd = laporder(sire,dam);
 p = Pedigree(ss,dd);
 tt = Tinvt(p);
 @test all(tt.data.nzval .== -0.5)
-@test sort(unique(diff(tt.colptr))) = [0,1,2]
+@test sort(unique(diff(tt.data.colptr))) == [0,1,2]
 
-Lt = Ltrans(p)
+Lt = Ltrans(p);
 
