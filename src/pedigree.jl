@@ -1,12 +1,12 @@
 module pedigree
 
-if isfile(joinpath(Pkg.dir("pedigree"),"deps","deps.jl"))
-    include("../deps/deps.jl")
-else
-    error("pedigree not properly installed. Please run Pkg.build(\"pedigree\")")
-end
+## if isfile(joinpath(Pkg.dir("pedigree"),"deps","deps.jl"))
+##     include("../deps/deps.jl")
+## else
+##     error("pedigree not properly installed. Please run Pkg.build(\"pedigree\")")
+## end
 
-    export Pedigree, inbreeding, orderped, laporder
+    export Pedigree, laporder, Tinvt, Tmat
 
     include("types.jl")
     include("inbreeding.jl")
