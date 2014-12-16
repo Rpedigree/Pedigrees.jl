@@ -1,9 +1,8 @@
 module pedigree
 
-    export Pedigree, laporder, Tinvt, Ltrans
+    export Pedigree, inbreeding, laporder, Ltrans, Tinvt
 
     include("types.jl")
-    include("inbreeding.jl")
     include("Tmat.jl")
 
 end #module

@@ -45,3 +45,17 @@ function Ltrans{T}(p::Pedigree{T})
     end
     SparseMatrixCSC(n,n,cpl,rvl,nvl)
 end
+
+function inbreeding(p::Pedigree)
+    Lt = Ltrans(p)
+    inb = zeros(Lt.n)
+    nvl = Lt.nzval
+    cpt = Lt.colptr
+    for i in 1:Lt.n
+        for k in cpt[i]:(cpt[i+1]-1)
+            inb[i] += abs2(nvl[k])
+        end
+        inb[i] -= one(eltype(inb))
+    end
+    inb,Lt
+end
