@@ -1,4 +1,4 @@
-module pedigree
+module Pedigrees
 
     export Pedigree, inbreeding, laporder, Ltrans, Tinvt
 
