@@ -22,10 +22,16 @@ relationships is the additive relationship matrix, usually written
 Prediction of Animal Breeding Values, 2nd edition_, 2004, chapter 2).
 
 In practice, the Cholesky factor, `L`, which is a lower triangular
-matrix with positive diagonal elements and satisfying $A = LL'$ is
-more useful.  `L` or its transpose, often written `R` because $A=R'R$
-so `R` is the one on the right and `L` is the one on the left, can be
-evaluated directly.
+matrix with positive diagonal elements and satisfying `A = LL'` is
+more useful.  The `Ltrans` function in this package evaluates the
+transpose of `L` as a sparse matrix.  The reason for evaluating `L'`
+and not `L` is because the result is in the `SparseMatrixCSC` format
+and it is the rows of `L` that are easier to evaluate than the
+columns.  In other words, a column-oriented format is more suitable
+for `L'`.
+
+The `inbreeding` function evaluates both the inbreeding coefficients
+and `L'`.
 
 
 
