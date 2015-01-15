@@ -17,4 +17,5 @@ tt = Tinvt(p);
 @test sort(unique(diff(tt.data.colptr))) == [0,1,2]
 
 Lt = Ltrans(p);
+;
 
