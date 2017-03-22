@@ -2,7 +2,7 @@ type Pedigree{T<:Integer}
     sire::Vector{T}
     dam::Vector{T}
     perm::Vector{T}
-    lappt::Vector{T}
+    lappt::Vector{T} 
 end
 
 function Pedigree{T<:Integer}(sire::Vector{T},dam::Vector{T})
